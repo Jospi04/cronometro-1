@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cronómetro con Estilo</title>
+  <style>
+    /* Fondo con imagen + degradado */
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                  url("img/holi.png") no-repeat center center/cover;
+    }
+
+    .container {
+      text-align: center;
+      z-index: 2;
+      position: relative;
+    }
+
+    #timer-display {
+      font-size: 5rem;
+      margin-bottom: 10px; /* <-- separación pequeñita */
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .control-btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.15);
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(6px);
+    }
+
+    .control-btn:hover {
+      background: rgba(255,255,255,0.35);
+      transform: scale(1.05);
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+      fill: white;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="timer-display">05:00</h1>
+    <div class="controls">
+      <button id="startBtn" class="control-btn">Iniciar</button>
+      <button id="pauseBtn" class="control-btn">Pausar</button>
+      <button id="resetBtn" class="control-btn">Reiniciar</button>
+     
+    </div>
+  </div>
+
+  <audio id="backgroundMusic" loop>
+    <source src="musica.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    let timerDisplay = document.getElementById("timer-display");
+    let startBtn = document.getElementById("startBtn");
+    let pauseBtn = document.getElementById("pauseBtn");
+    let resetBtn = document.getElementById("resetBtn");
+    let musicBtn = document.getElementById("musicBtn");
+    let music = document.getElementById("backgroundMusic");
+    let musicIconOn = document.getElementById("music-icon-on");
+    let musicIconOff = document.getElementById("music-icon-off");
+
+    let timer;
+    let timeLeft = 5 * 60;
+    let running = false;
+
+    function updateDisplay() {
+      let minutes = Math.floor(timeLeft / 60);
+      let seconds = timeLeft % 60;
+      timerDisplay.textContent = 
+        `${minutes.toString().padStart(2,"0")}:${seconds.toString().padStart(2,"0")}`;
+    }
+
+    function startTimer() {
+      if (!running) {
+        running = true;
+        timer = setInterval(() => {
+          if (timeLeft > 0) {
+            timeLeft--;
+            updateDisplay();
+          } else {
+            clearInterval(timer);
+            running = false;
+            alert("⏰ ¡Tiempo terminado!");
+          }
+        }, 1000);
+      }
+    }
+
+    function pauseTimer() {
+      clearInterval(timer);
+      running = false;
+    }
+
+    function resetTimer() {
+      clearInterval(timer);
+      running = false;
+      timeLeft = 5 * 60;
+      updateDisplay();
+    }
+
+    function toggleMusic() {
+      if (music.paused) {
+        music.play();
+        musicIconOn.style.display = "inline";
+        musicIconOff.style.display = "none";
+      } else {
+        music.pause();
+        musicIconOn.style.display = "none";
+        musicIconOff.style.display = "inline";
+      }
+    }
+
+    startBtn.addEventListener("click", startTimer);
+    pauseBtn.addEventListener("click", pauseTimer);
+    resetBtn.addEventListener("click", resetTimer);
+    musicBtn.addEventListener("click", toggleMusic);
+
+    updateDisplay();
+  </script>
+</body>
+</html>
